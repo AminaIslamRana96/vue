@@ -38,29 +38,10 @@ function showHover() {
 	}
 }
 
-/**
- * get search button click if short sidebar or mobile
- */
-function getSearch() {
-	document.querySelector(".callSearch").addEventListener("click", function (e) {
-		e.preventDefault();
-		if (
-			document.querySelector("body").classList.contains("short") ||
-			window.innerWidth <= 844
-		) {
-			document.querySelector(".searchWindow").classList.toggle("active");
-		}
-	});
-	document
-		.querySelector(".cancelSearch")
-		.addEventListener("click", function () {
-			document.querySelector(".searchWindow").classList.toggle("active");
-		});
-}
 
-/**
- * check local storage for keep sidebar
- */
+
+
+
 function showStoredSidebar() {
 	if (localStorage.getItem("keepSidebar") === "true") {
 		document.querySelector("body").classList.add("short");

@@ -13,8 +13,20 @@
 </head>
 
 <body>
+    <script>
+        $(document).ready(function () {
+            $(window).on('resize', function () {
+                if ($(window).width() < 992) {
+                    $("#searchForm").appendTo("#sidebar");
+                }
+                else {
+                    $("#searchForm").appendTo("#sf");
+                }
+            });
+        });
+    </script>
     <!-- <div id="app"> -->
-    <div class="container">
+    <div class="container-fluid">
         <nav class="navbar navbar-default navbar-fixed-top navbar-expand-lg navigation-bg pb-5">
 
             <div class="col-6">
@@ -24,8 +36,8 @@
             <div class="col-6" id="sf">
                 <div id="searchForm">
                     <form class="d-flex navF ">
-                        <input class="form-control me-2" type="search" placeholder="Search Product"
-                            aria-label="Search" />
+                        <input class="form-control me-2" style="width:200px ;" type="search"
+                            placeholder="Search Product" aria-label="Search" />
                         <button class="btn-outline-dark " type="submit">
                             Search
                         </button>
@@ -35,23 +47,23 @@
         </nav>
     </div>
 
-    <script>
-    </script>
 
     <div class="container">
         <div class="row">
-            <div class="col-3 sidebar">
-                <div class="sidebartop">
-                <div class="menu">
-                    <i class="fa-solid fa-bars"></i>
+            <div class="col-3 sidebar" id="sidebar">
+                <div class="sidebartop" >
+                    <div class="menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </div>
                 </div>
-            </div>
-                <ul class="side-bar" style="--bs-scroll-height: 100px">
-                    <li><a href="index.html" aria-current="page"><i class="fa-solid fa-house icon"></i><span class="text">Home</span></a></li>
-                    <li><a href="#"><i class="fa-brands fa-product-hunt icon"></i><span class="text">Products</span></a></li>
+                <ul id="sidebar">
+                    <li><a href="index.html" aria-current="page"><i class="fa-solid fa-house icon"></i><span
+                                class="text">Home</span></a></li>
+                    <li><a href="#"><i class="fa-brands fa-product-hunt icon"></i><span class="text">Products</span></a>
+                    </li>
                     <li><a href="#"><i class="fa-brands fa-sistrix icon"></i><span class="text">About</span></a></li>
                     <li><a href="#"><i class="fa-solid fa-phone icon"></i><span class="text">Contact</span></a></li>
-                    
+
                 </ul>
             </div>
             <script src="/side.js"></script>
@@ -94,54 +106,55 @@
     <!-- </div> -->
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
-    <video id="video" width="140" height="100" autoplay></video>
-    <button id="start">Start Recording</button>
-    <button id="stop">Stop Recording</button>
+    <div class="videos">
+        <video id="video" width="140" height="100" autoplay></video>
+        <button id="start">Start Recording</button>
+        <button id="stop">Stop Recording</button>
+    </div>
     <script>
-      const video = document.getElementById('video');
-      const startButton = document.getElementById('start');
-      const stopButton = document.getElementById('stop');
-      let mediaRecorder;
-      let recordedChunks = [];
+        const video = document.getElementById('video');
+        const startButton = document.getElementById('start');
+        const stopButton = document.getElementById('stop');
+        let mediaRecorder;
+        let recordedChunks = [];
 
-      navigator.mediaDevices.getUserMedia({ video: true,audio:true })
-        .then(stream => {
-          video.srcObject = stream;
-          mediaRecorder = new MediaRecorder(stream);
-          mediaRecorder.ondataavailable = handleDataAvailable;
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+                video.srcObject = stream;
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = handleDataAvailable;
+            });
+
+        startButton.addEventListener('click', () => {
+            recordedChunks = [];
+            mediaRecorder.start();
         });
 
-      startButton.addEventListener('click', () => {
-        recordedChunks = [];
-        mediaRecorder.start();
-      });
+        stopButton.addEventListener('click', () => {
+            mediaRecorder.stop();
+        });
 
-      stopButton.addEventListener('click', () => {
-        mediaRecorder.stop();
-      });
-
-      function handleDataAvailable(event) {
-        if (event.data.size > 0) {
-          recordedChunks.push(event.data);
-          saveVideo();
+        function handleDataAvailable(event) {
+            if (event.data.size > 0) {
+                recordedChunks.push(event.data);
+                saveVideo();
+            }
         }
-      }
-      function saveVideo() {
-      const blob = new Blob(recordedChunks, { type: 'video/webm' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      document.body.appendChild(a);
-      a.style = 'display: none';
-      a.href = url;
-      a.download = 'Recording.webm';
-      a.click();
-      window.URL.revokeObjectURL(url);
-      }
-      window.addEventListener('beforeunload', () => {
-        saveVideo();
-        localStorage.setItem('video', recordedChunks);
-      });
+        function saveVideo() {
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            document.body.appendChild(a);
+            a.style = 'display: none';
+            a.href = url;
+            a.download = 'Recording.webm';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        window.addEventListener('beforeunload', () => {
+            saveVideo();
+            localStorage.setItem('video', recordedChunks);
+        });
     </script>
 
 
@@ -162,18 +175,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js">
     </script>
 
-    <script>
-        $(document).ready(function () {
-            $(window).on('resize', function () {
-                if ($(window).width() < 992) {
-                    $("#searchForm").appendTo("#sidebar");
-                }
-                else {
-                    $("#searchForm").appendTo("#sf");
-                }
-            });
-        });
-    </script>
+   
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
