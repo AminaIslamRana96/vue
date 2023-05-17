@@ -19,51 +19,43 @@
 
             <div class="col-6">
                 <img src="logo.webp" alt="logo here" srcset="">
+                <i class="fa-sharp fa-regular fa-circle-heart" style="color: #51371f;"></i>
             </div>
-            <div class="col-6">
-
-                <button class="navbar-toggler navbar-light pull-right" type="button" 
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarToggleExternalContent" 
-                        aria-controls="navbarToggleExternalContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <form class="d-flex navF">
-                    <input class="form-control me-2" type="search" placeholder="Search Product" aria-label="Search" />
-                    <button class="btn-outline-dark " type="submit">
-                        Search
-                    </button>
-                </form>
+            <div class="col-6" id="sf">
+                <div id="searchForm">
+                    <form class="d-flex navF ">
+                        <input class="form-control me-2" type="search" placeholder="Search Product"
+                            aria-label="Search" />
+                        <button class="btn-outline-dark " type="submit">
+                            Search
+                        </button>
+                    </form>
+                </div>
             </div>
-
         </nav>
-
     </div>
-    <div class="container-fluid">
+
+    <script>
+    </script>
+
+    <div class="container">
         <div class="row">
             <div class="col-3 sidebar">
-                <ul class="side-bar" style="--bs-scroll-height: 100px">
-                    <li class="side-item">
-                        <i class="fa-solid fa-house"></i>
-                        <a class="side-link active" aria-current="page" href="index.html">Home</a>
-                    </li>
-                    <li class="side-item">
-                        <i class="fa-brands fa-product-hunt"></i>
-                        <a class="side-link" href="product.html">Products</a>
-                    </li>
-                    <li class="side-item">
-                        <i class="fa-brands fa-sistrix"></i>
-                        <a class="side-link" href="AboutUs.html">About Us</a>
-                    </li>
-                    <li class="side-item">
-                        <i class="fa-solid fa-phone"></i>
-                        <a class="sides-link" href="contact.html">Contact</a>
-                    </li>
-                </ul>
-
+                <div class="sidebartop">
+                <div class="menu">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
             </div>
+                <ul class="side-bar" style="--bs-scroll-height: 100px">
+                    <li><a href="index.html" aria-current="page"><i class="fa-solid fa-house icon"></i><span class="text">Home</span></a></li>
+                    <li><a href="#"><i class="fa-brands fa-product-hunt icon"></i><span class="text">Products</span></a></li>
+                    <li><a href="#"><i class="fa-brands fa-sistrix icon"></i><span class="text">About</span></a></li>
+                    <li><a href="#"><i class="fa-solid fa-phone icon"></i><span class="text">Contact</span></a></li>
+                    
+                </ul>
+            </div>
+            <script src="/side.js"></script>
+
             <div class="col-9 main">
                 <div class="row">
                     <div class="col-3">
@@ -94,70 +86,94 @@
                                 Submit
                             </button>
                         </form>
-
                     </div>
                 </div>
-
             </div>
         </div>
-
     </div>
     <!-- </div> -->
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
-    <div id="app" class="web-camera-container">
-        <div class="camera-button">
-            <button type="button" class="button is-rounded" :class="{ 'is-primary' : !isCameraOpen, 'is-danger' : isCameraOpen}" @click="toggleCamera">
-              <span v-if="!isCameraOpen">Open Camera</span>
-              <span v-else>Close Camera</span>
-          </button>
-        </div>
-        
-        <div v-show="isCameraOpen && isLoading" class="camera-loading">
-          <ul class="loader-circle">
-            <li></li>
-            <li></li>
-            <li></li>
-          </ul>
-        </div>
-        
-        <div v-if="isCameraOpen" v-show="!isLoading" class="camera-box" :class="{ 'flash' : isShotPhoto }">
-          
-          <div class="camera-shutter" :class="{'flash' : isShotPhoto}"></div>
-            
-          <video v-show="!isPhotoTaken" ref="camera" :width="450" :height="337.5" autoplay></video>
-          
-          <canvas v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="450" :height="337.5"></canvas>
-        </div>
-        
-        <div v-if="isCameraOpen && !isLoading" class="camera-shoot">
-          <button type="button" class="button" @click="takePhoto">
-            <img src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png">
-          </button>
-        </div>
-        
-        <div v-if="isPhotoTaken && isCameraOpen" class="camera-download">
-          <a id="downloadPhoto" download="my-photo.jpg" class="button" role="button" @click="downloadImage">
-            Download
-          </a>
-        </div>
-      </div>
+    <video id="video" width="140" height="100" autoplay></video>
+    <button id="start">Start Recording</button>
+    <button id="stop">Stop Recording</button>
+    <script>
+      const video = document.getElementById('video');
+      const startButton = document.getElementById('start');
+      const stopButton = document.getElementById('stop');
+      let mediaRecorder;
+      let recordedChunks = [];
 
-    <!-- <script>
+      navigator.mediaDevices.getUserMedia({ video: true,audio:true })
+        .then(stream => {
+          video.srcObject = stream;
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.ondataavailable = handleDataAvailable;
+        });
 
-        const app = Vue.createApp({
-          data() {
-            return {
-              message: "Hello World!"
-            }
-          }
-        })
-      
-       app.mount('#app')
+      startButton.addEventListener('click', () => {
+        recordedChunks = [];
+        mediaRecorder.start();
+      });
+
+      stopButton.addEventListener('click', () => {
+        mediaRecorder.stop();
+      });
+
+      function handleDataAvailable(event) {
+        if (event.data.size > 0) {
+          recordedChunks.push(event.data);
+          saveVideo();
+        }
+      }
+      function saveVideo() {
+      const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      a.style = 'display: none';
+      a.href = url;
+      a.download = 'Recording.webm';
+      a.click();
+      window.URL.revokeObjectURL(url);
+      }
+      window.addEventListener('beforeunload', () => {
+        saveVideo();
+        localStorage.setItem('video', recordedChunks);
+      });
+    </script>
 
 
-    </script> -->
+    <div id="output"> </div><br>
+
+    <script>
+        let output = document.getElementById("output");
+
+        window.onblur = function () {
+            output.innerHTML += "browser tab is changed </br>";
+        };
+
+
+        window.onfocus = function () {
+            output.innerHTML += "Browser tab is again active! </br>";
+        };
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js">
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $(window).on('resize', function () {
+                if ($(window).width() < 992) {
+                    $("#searchForm").appendTo("#sidebar");
+                }
+                else {
+                    $("#searchForm").appendTo("#sf");
+                }
+            });
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
